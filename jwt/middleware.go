@@ -9,15 +9,13 @@ import (
 
 const ()
 
-// Middleware returns a goa middleware which implements the given CORS specification.
-func Middleware(spec Specification) goa.Middleware {
-	return func(h goa.Handler) goa.Handler {
-		return func(ctx *goa.Context) error {
-			return nil
+func JWTMiddleware(ttl int, secret string) Middleware {
+	return func(h goa.Handler) Handler {
+		return func(ctx *Context) (err error) {
+			return h(ctx)
 		}
 	}
 }
-
 func Token(claims map[string]string) (string, error) {
 	// create a signer for rsa 256
 	t := jwt.New(jwt.GetSigningMethod("RS256"))
