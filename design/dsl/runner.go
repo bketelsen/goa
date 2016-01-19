@@ -104,25 +104,13 @@ func RunDSL() error {
 	// run external DSL Definitions
 	for _, construct := range design.Design.Constructs {
 		for _, def := range construct {
-			executeDSL(def.DSL(), def)
-			for _, child := range def.Children() {
-				executeDSL(child.DSL(), child)
-			}
+			recurseDSL(def)
 		}
 	}
 	// Validate External DSL
 	for _, construct := range design.Design.Constructs {
 		for _, def := range construct {
-			err := def.Validate()
-			if err != nil {
-				ReportError("Error validating external DSL %#v", err)
-			}
-			for _, child := range def.Children() {
-				err := child.Validate()
-				if err != nil {
-					ReportError("Error validating external DSL %#v", err)
-				}
-			}
+			recurseValidate(def)
 		}
 	}
 
@@ -130,6 +118,23 @@ func RunDSL() error {
 		return Errors
 	}
 	return nil
+}
+func recurseValidate(def design.ExternalDSLDefinition) {
+	err := def.Validate()
+	if err != nil {
+		ReportError("Error validating external DSL %#v", err)
+	}
+	for _, child := range def.Children() {
+		recurseValidate(child)
+	}
+
+}
+func recurseDSL(def design.ExternalDSLDefinition) {
+	executeDSL(def.DSL(), def)
+	for _, child := range def.Children() {
+		recurseDSL(child)
+	}
+
 }
 func Current() design.DSLDefinition {
 	return ctxStack.current()
