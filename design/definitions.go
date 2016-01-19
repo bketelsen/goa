@@ -32,6 +32,7 @@ type (
 		// Context is used to build error messages that refer to the definition.
 		DSLDefinition
 		DSL() func()
+		Children() []ExternalDSLDefinition
 	}
 
 	// Versioned is implemented by potentially versioned definitions such as resources and types.
@@ -563,8 +564,8 @@ func NewConstruct(name string) Construct {
 		Design.Constructs = make(ConstructsSet)
 	}
 
-	Design.Constructs[name] = make(Construct)
-
+	var constr = make(Construct)
+	Design.Constructs[name] = constr
 	return Design.Constructs[name]
 
 }

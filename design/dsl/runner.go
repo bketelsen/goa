@@ -105,6 +105,9 @@ func RunDSL() error {
 	for _, construct := range design.Design.Constructs {
 		for _, def := range construct {
 			executeDSL(def.DSL(), def)
+			for _, child := range def.Children() {
+				executeDSL(child.DSL(), child)
+			}
 		}
 	}
 
