@@ -101,6 +101,13 @@ func RunDSL() error {
 		finalizeResource(r)
 	}
 
+	// now run external DSL Definitions
+	for _, construct := range design.Design.Constructs {
+		for _, def := range construct {
+			executeDSL(def.DSL(), def)
+		}
+	}
+
 	return nil
 }
 func Current() design.DSLDefinition {
