@@ -119,6 +119,9 @@ func RunDSL() error {
 	}
 	return nil
 }
+
+// recurseValidate runs the validations for the object
+// and all children
 func recurseValidate(def design.ExternalDSLDefinition) {
 	err := def.Validate()
 	if err != nil {
@@ -129,6 +132,9 @@ func recurseValidate(def design.ExternalDSLDefinition) {
 	}
 
 }
+
+// recurseDSL executes the dsl for the object and
+// all children
 func recurseDSL(def design.ExternalDSLDefinition) {
 	executeDSL(def.DSL(), def)
 	for _, child := range def.Children() {
@@ -136,6 +142,8 @@ func recurseDSL(def design.ExternalDSLDefinition) {
 	}
 
 }
+
+// Current returns the current stack object
 func Current() design.DSLDefinition {
 	return ctxStack.current()
 }
