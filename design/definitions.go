@@ -33,6 +33,7 @@ type (
 		DSLDefinition
 		DSL() func()
 		Children() []ExternalDSLDefinition
+		Validate() *ValidationErrors
 	}
 
 	// Versioned is implemented by potentially versioned definitions such as resources and types.

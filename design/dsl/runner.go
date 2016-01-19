@@ -101,7 +101,7 @@ func RunDSL() error {
 		finalizeResource(r)
 	}
 
-	// now run external DSL Definitions
+	// run external DSL Definitions
 	for _, construct := range design.Design.Constructs {
 		for _, def := range construct {
 			executeDSL(def.DSL(), def)
@@ -110,7 +110,25 @@ func RunDSL() error {
 			}
 		}
 	}
+	// Validate External DSL
+	for _, construct := range design.Design.Constructs {
+		for _, def := range construct {
+			err := def.Validate()
+			if err != nil {
+				ReportError("Error validating external DSL %#v", err)
+			}
+			for _, child := range def.Children() {
+				err := child.Validate()
+				if err != nil {
+					ReportError("Error validating external DSL %#v", err)
+				}
+			}
+		}
+	}
 
+	if Errors != nil {
+		return Errors
+	}
 	return nil
 }
 func Current() design.DSLDefinition {
