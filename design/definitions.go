@@ -27,6 +27,12 @@ type (
 		// Context is used to build error messages that refer to the definition.
 		Context() string
 	}
+	// ExternalDSLDefinition is an externally defined DSL definition
+	ExternalDSLDefinition interface {
+		// Context is used to build error messages that refer to the definition.
+		DSLDefinition
+		DSL() func()
+	}
 
 	// Versioned is implemented by potentially versioned definitions such as resources and types.
 	Versioned interface {
@@ -55,6 +61,10 @@ type (
 		// rand is the random generator used to generate examples.
 		rand *RandomGenerator
 	}
+	// Construct is a single external DSL Definition's set of types
+	Construct map[string]ExternalDSLDefinition
+	// ConstructSet is a map of registered external DSL providers
+	ConstructsSet map[string]Construct
 
 	// APIVersionDefinition defines the properties of the API for a given version.
 	APIVersionDefinition struct {
@@ -96,6 +106,8 @@ type (
 		DSL func()
 		// Metadata is a list of key/value pairs
 		Metadata MetadataDefinition
+		// Constructs is a map of external DSLs defined in plugins
+		Constructs ConstructsSet
 	}
 
 	// ContactDefinition contains the API contact information.
@@ -543,6 +555,18 @@ func (a *APIDefinition) SupportsVersion(ver string) bool {
 // SupportsNoVersion returns true if the API is unversioned.
 func (a *APIDefinition) SupportsNoVersion() bool {
 	return len(a.APIVersions) == 0
+}
+
+// NewConstructsSet creates and returns a set of external DSL definitions
+func NewConstruct(name string) Construct {
+	if Design.Constructs == nil {
+		Design.Constructs = make(ConstructsSet)
+	}
+
+	Design.Constructs[name] = make(Construct)
+
+	return Design.Constructs[name]
+
 }
 
 // Context returns the generic definition name used in error messages.

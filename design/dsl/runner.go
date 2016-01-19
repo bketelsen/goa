@@ -103,6 +103,9 @@ func RunDSL() error {
 
 	return nil
 }
+func Current() design.DSLDefinition {
+	return ctxStack.current()
+}
 
 // Current evaluation context, i.e. object being currently built by DSL
 func (s contextStack) current() design.DSLDefinition {

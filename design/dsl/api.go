@@ -82,7 +82,11 @@ func Version(ver string, dsl func()) *design.APIVersionDefinition {
 	if design.Design == nil {
 		InitDesign()
 	}
-	verdef := &design.APIVersionDefinition{Version: ver, DSL: dsl}
+	verdef := &design.APIVersionDefinition{
+		Version:    ver,
+		DSL:        dsl,
+		Constructs: make(map[string]design.ExternalDSLDefinition),
+	}
 	if _, ok := design.Design.APIVersions[ver]; ok {
 		ReportError("API Version %s defined twice", ver)
 		return verdef
